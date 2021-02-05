@@ -8,6 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "start:dev": "ng build & node server",
     "start:dist": "node server"
   },
   "private": true,
@@ -22,6 +23,7 @@
     "@angular/router": "~11.0.4",
     "express": "^4.17.1",
     "rxjs": "~6.6.0",
+    "socket.io": "^3.1.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },

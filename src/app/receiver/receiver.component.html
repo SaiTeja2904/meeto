@@ -1,0 +1,12 @@
+Receiver
+<div><input type="text" #roomId /><button (click)="join()">Join</button></div>
+<div>
+  <input #sndMessage />
+  <button (click)="sendMessage()">Send Message</button>
+</div>
+
+<div>
+  <div *ngFor="let message of messages">
+    {{ message.user }}: {{ message.data }}
+  </div>
+</div>

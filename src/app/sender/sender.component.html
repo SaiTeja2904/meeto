@@ -1,0 +1,11 @@
+Host Id: {{ id }}
+
+<div></div>
+<input #sndMessage />
+<button (click)="sendMessage()">Send</button>
+
+<div>
+  <div *ngFor="let message of messages">
+    {{ message.user }}: {{ message.data }}
+  </div>
+</div>
