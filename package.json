@@ -26,6 +26,7 @@
     "angular-particle": "^1.0.4",
     "express": "^4.17.1",
     "rxjs": "~6.6.0",
+    "rxjs-operators": "^1.1.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },

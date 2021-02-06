@@ -8,9 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConnectionComponent } from './connection/connection.component';
 import { EditorComponent } from './editor/editor.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CodePlatformComponent } from './code-platform/code-platform.component';
+import { HostComponent } from './host/host.component';
+import { GuestComponent } from './guest/guest.component';
 
 @NgModule({
-  declarations: [AppComponent, ConnectionComponent, EditorComponent],
+  declarations: [AppComponent, ConnectionComponent, EditorComponent, CodePlatformComponent, HostComponent, GuestComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

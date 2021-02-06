@@ -26,46 +26,19 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   @ViewChild('editor') private editor: ElementRef<HTMLElement>;
   value = '';
   aceEditor;
+  manualChange = false;
 
   onChange: any = () => {};
   onTouch: any = () => {};
-  tempCode = `// program to check if a number is prime or not
-
-  // take input from the user
-  const number = parseInt(prompt("Enter a positive number: "));
-  let isPrime = true;
-  
-  // check if number is equal to 1
-  if (number === 1) {
-      console.log("1 is neither prime nor composite number.");
-  }
-  
-  // check if number is greater than 1
-  else if (number > 1) {
-  
-      // looping through 2 to number-1
-      for (let i = 2; i < number; i++) {
-          if (number % i == 0) {
-              isPrime = false;
-              break;
-          }
-      }
-  
-      if (isPrime) {
-          console.log("Prime Number");
-      } else {
-          console.log("Not a prime number");
-      }
-  }
-  
-  // check if number is less than 1
-  else {
-      console.log("The number is not a prime number.");
-  }`;
 
   constructor() {}
+
   writeValue(obj: any): void {
-    this.aceEditor.session.setValue(obj);
+    if (obj) {
+      console.log('Setting', obj);
+      this.manualChange = true;
+      this.aceEditor.session.setValue(obj);
+    }
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -88,9 +61,15 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
     this.aceEditor = ace.edit(this.editor.nativeElement);
     this.aceEditor.setTheme('ace/theme/twilight');
     this.aceEditor.session.setMode('ace/mode/javascript');
-    this.aceEditor.session.setValue(this.tempCode);
+    // this.aceEditor.session.setValue(this.tempCode);
     this.aceEditor.on('change', () => {
-      this.onChange(this.aceEditor.getValue());
+      console.log('Emmitting', this.aceEditor.getValue(), this.manualChange);
+      if (!this.manualChange) {
+        if (this.aceEditor.getValue()) {
+          this.onChange(this.aceEditor.getValue());
+        }
+      }
+      this.manualChange = false;
     });
   }
 }
