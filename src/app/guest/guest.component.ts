@@ -53,51 +53,62 @@ export class GuestComponent implements OnInit {
     console.log(this.peerId);
     this.connection = this.peer.connect(_roomId, { reliable: true });
     this.connection.on('open', () => {
-      console.log('Connected to ', this.connection.peer);
-      setInterval(() => {
-        // this.connection.send({ ...this.codeFormControl.value, code: 'Guest' });
-        // this.codeFormControl.setValue({
-        //   ...this.codeFormControl.value,
-        //   code: 'Guest',
-        // });
-        this.connection.send(this.codeFormControl.value);
-      }, 200);
+      this.sendMessages();
       this.isUserConnected = true;
-      this.connection.on('data', (value) => {
-        console.log('Value Received', value, this.codeFormControl.value);
-        if (this.shouldUpdate(value, this.codeFormControl.value)) {
-          console.log('Updating');
-          this.codeFormControl.setValue(value);
-        }
-      });
-      const x: any = window.navigator;
-      var getUserMedia =
-        navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
-      this.peer.on('call', (call) => {
-        getUserMedia(
-          { video: true, audio: true },
-          (stream) => {
-            call.answer(stream); // Answer the call with an A/V stream.
-            call.on('stream', (remoteStream) => {
-              const hostVideoElement = this.hostVideo.nativeElement;
-              hostVideoElement.srcObject = stream;
-              hostVideoElement.onloadedmetadata = (e: any) => {
-                hostVideoElement.play();
-              };
-
-              const guestVideoElement = this.guestVideo.nativeElement;
-              guestVideoElement.srcObject = remoteStream;
-              guestVideoElement.onloadedmetadata = (e: any) => {
-                guestVideoElement.play();
-              };
-            });
-          },
-          (err) => {
-            console.log('Failed to get local stream', err);
-          }
-        );
-      });
+      this.receiveMessages();
+      this.streamAudioVideo();
     });
+  }
+
+  private streamAudioVideo() {
+    const x: any = window.navigator;
+    var getUserMedia = navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+    this.peer.on('call', (call) => {
+      getUserMedia(
+        { video: true, audio: true },
+        (stream) => {
+          call.answer(stream); // Answer the call with an A/V stream.
+          call.on('stream', (remoteStream) => {
+            const hostVideoElement = this.hostVideo.nativeElement;
+            hostVideoElement.srcObject = stream;
+            hostVideoElement.onloadedmetadata = (e: any) => {
+              hostVideoElement.play();
+            };
+
+            const guestVideoElement = this.guestVideo.nativeElement;
+            guestVideoElement.srcObject = remoteStream;
+            guestVideoElement.onloadedmetadata = (e: any) => {
+              guestVideoElement.play();
+            };
+          });
+        },
+        (err) => {
+          console.log('Failed to get local stream', err);
+        }
+      );
+    });
+  }
+
+  private receiveMessages() {
+    this.connection.on('data', (value) => {
+      console.log('Value Received', value, this.codeFormControl.value);
+      if (this.shouldUpdate(value, this.codeFormControl.value)) {
+        console.log('Updating');
+        this.codeFormControl.setValue(value);
+      }
+    });
+  }
+
+  private sendMessages() {
+    console.log('Connected to ', this.connection.peer);
+    setInterval(() => {
+      // this.connection.send({ ...this.codeFormControl.value, code: 'Guest' });
+      // this.codeFormControl.setValue({
+      //   ...this.codeFormControl.value,
+      //   code: 'Guest',
+      // });
+      this.connection.send(this.codeFormControl.value);
+    }, 100);
   }
 
   shouldUpdate(newVal, currVal) {

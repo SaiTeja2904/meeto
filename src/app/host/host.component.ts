@@ -27,7 +27,7 @@ export class HostComponent implements OnInit {
 
   constructor() {}
 
-  private listenForDataChanges() {
+  private receiveMessages() {
     this.connection.on('data', (value) => {
       console.log('Value Received', value, this.codeFormControl.value);
       if (this.shouldUpdate(value, this.codeFormControl.value)) {
@@ -69,34 +69,37 @@ export class HostComponent implements OnInit {
       this.connection = _connection;
       console.log('Connected to ' + _connection.peer);
       this.isUserConnected = true;
-      const x: any = navigator;
-      var getUserMedia =
-        x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
-      getUserMedia(
-        { video: true, audio: true },
-        (stream) => {
-          var call = this.peer.call(_connection.peer, stream);
-          call.on('stream', (remoteStream) => {
-            const hostVideoElement = this.hostVideo.nativeElement;
-            hostVideoElement.srcObject = stream;
-            hostVideoElement.onloadedmetadata = (e: any) => {
-              hostVideoElement.play();
-            };
-
-            const guestVideoElement = this.guestVideo.nativeElement;
-            guestVideoElement.srcObject = remoteStream;
-            guestVideoElement.onloadedmetadata = (e: any) => {
-              guestVideoElement.play();
-            };
-          });
-        },
-        (err) => {
-          console.log('Failed to get local stream', err);
-        }
-      );
+      this.startVideoStream(_connection);
       this.sendMessages();
-      this.listenForDataChanges();
+      this.receiveMessages();
     });
+  }
+
+  private startVideoStream(_connection: any) {
+    const x: any = navigator;
+    var getUserMedia = x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+    getUserMedia(
+      { video: true, audio: true },
+      (stream) => {
+        var call = this.peer.call(_connection.peer, stream);
+        call.on('stream', (remoteStream) => {
+          const hostVideoElement = this.hostVideo.nativeElement;
+          hostVideoElement.srcObject = stream;
+          hostVideoElement.onloadedmetadata = (e: any) => {
+            hostVideoElement.play();
+          };
+
+          const guestVideoElement = this.guestVideo.nativeElement;
+          guestVideoElement.srcObject = remoteStream;
+          guestVideoElement.onloadedmetadata = (e: any) => {
+            guestVideoElement.play();
+          };
+        });
+      },
+      (err) => {
+        console.log('Failed to get local stream', err);
+      }
+    );
   }
 
   shouldUpdate(newVal, currVal) {
