@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -22,6 +22,9 @@ export class GuestComponent implements OnInit {
     code: '',
     timeStamp: Date.now(),
   });
+
+  @ViewChild('hostVideo') hostVideo: ElementRef;
+  @ViewChild('guestVideo') guestVideo: ElementRef;
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -66,6 +69,33 @@ export class GuestComponent implements OnInit {
           console.log('Updating');
           this.codeFormControl.setValue(value);
         }
+      });
+      const x: any = window.navigator;
+      var getUserMedia =
+        navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+      this.peer.on('call', (call) => {
+        getUserMedia(
+          { video: true, audio: true },
+          (stream) => {
+            call.answer(stream); // Answer the call with an A/V stream.
+            call.on('stream', (remoteStream) => {
+              const hostVideoElement = this.hostVideo.nativeElement;
+              hostVideoElement.srcObject = stream;
+              hostVideoElement.onloadedmetadata = (e: any) => {
+                hostVideoElement.play();
+              };
+
+              const guestVideoElement = this.guestVideo.nativeElement;
+              guestVideoElement.srcObject = remoteStream;
+              guestVideoElement.onloadedmetadata = (e: any) => {
+                guestVideoElement.play();
+              };
+            });
+          },
+          (err) => {
+            console.log('Failed to get local stream', err);
+          }
+        );
       });
     });
   }

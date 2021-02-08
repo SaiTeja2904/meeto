@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { interval } from 'rxjs';
 import { debounce } from 'rxjs/operators';
@@ -22,7 +22,35 @@ export class HostComponent implements OnInit {
     timeStamp: Date.now(),
   });
 
-  constructor() {
+  @ViewChild('hostVideo') hostVideo: ElementRef;
+  @ViewChild('guestVideo') guestVideo: ElementRef;
+
+  constructor() {}
+
+  private listenForDataChanges() {
+    this.connection.on('data', (value) => {
+      console.log('Value Received', value, this.codeFormControl.value);
+      if (this.shouldUpdate(value, this.codeFormControl.value)) {
+        console.log('Updating');
+        this.codeFormControl.setValue(value);
+      }
+    });
+  }
+
+  private sendMessages() {
+    setInterval(() => {
+      // this.connection.send({ ...this.codeFormControl.value, code: 'Host' });
+      // this.codeFormControl.setValue({
+      //   ...this.codeFormControl.value,
+      //   code: 'Host',
+      // });
+      this.connection.send(this.codeFormControl.value);
+    }, 100);
+  }
+
+  ngOnInit(): void {}
+
+  ngAfterViewInit() {
     this.peer = new Peer();
     this.peer.on('open', (_id) => {
       this.id = _id;
@@ -41,32 +69,34 @@ export class HostComponent implements OnInit {
       this.connection = _connection;
       console.log('Connected to ' + _connection.peer);
       this.isUserConnected = true;
-      setInterval(() => {
-        // this.connection.send({ ...this.codeFormControl.value, code: 'Host' });
-        // this.codeFormControl.setValue({
-        //   ...this.codeFormControl.value,
-        //   code: 'Host',
-        // });
-        this.connection.send(this.codeFormControl.value);
-      }, 100);
-      this.connection.on('data', (value) => {
-        console.log('Value Received', value, this.codeFormControl.value);
-        if (this.shouldUpdate(value, this.codeFormControl.value)) {
-          console.log('Updating');
-          this.codeFormControl.setValue(value);
+      const x: any = navigator;
+      var getUserMedia =
+        x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+      getUserMedia(
+        { video: true, audio: true },
+        (stream) => {
+          var call = this.peer.call(_connection.peer, stream);
+          call.on('stream', (remoteStream) => {
+            const hostVideoElement = this.hostVideo.nativeElement;
+            hostVideoElement.srcObject = stream;
+            hostVideoElement.onloadedmetadata = (e: any) => {
+              hostVideoElement.play();
+            };
+
+            const guestVideoElement = this.guestVideo.nativeElement;
+            guestVideoElement.srcObject = remoteStream;
+            guestVideoElement.onloadedmetadata = (e: any) => {
+              guestVideoElement.play();
+            };
+          });
+        },
+        (err) => {
+          console.log('Failed to get local stream', err);
         }
-      });
+      );
+      this.sendMessages();
+      this.listenForDataChanges();
     });
-  }
-
-  ngOnInit(): void {}
-
-  ngAfterViewInit() {
-    // this.codeFormControl.valueChanges
-    //   .pipe(debounce(() => interval(100)))
-    //   .subscribe((value) => {
-    //     this.connection.send(value);
-    //   });
   }
 
   shouldUpdate(newVal, currVal) {
