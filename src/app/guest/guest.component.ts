@@ -18,7 +18,10 @@ export class GuestComponent implements OnInit {
   messages = [];
   isUserConnected = false;
 
-  codeFormControl: FormControl = new FormControl('');
+  codeFormControl: FormControl = new FormControl({
+    code: '',
+    timeStamp: Date.now(),
+  });
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -48,12 +51,26 @@ export class GuestComponent implements OnInit {
     this.connection = this.peer.connect(_roomId, { reliable: true });
     this.connection.on('open', () => {
       console.log('Connected to ', this.connection.peer);
+      setInterval(() => {
+        this.connection.send(this.codeFormControl.value);
+      }, 100);
       this.isUserConnected = true;
-      this.connection.on('data', (data) => {
-        console.log('Value Received');
-        this.codeFormControl.setValue(data);
+      this.connection.on('data', (value) => {
+        // console.log('Value Received', value, this.codeFormControl.value);
+        if (this.shouldUpdate(value, this.codeFormControl.value)) {
+          // console.log('Updating');
+          this.codeFormControl.setValue(value);
+        }
       });
     });
+  }
+
+  shouldUpdate(newVal, currVal) {
+    if (newVal.code !== currVal.code && newVal.timeStamp > currVal.timeStamp) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   ngAfterViewInit() {

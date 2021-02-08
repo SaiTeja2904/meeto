@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { interval } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 
 declare let Peer: any;
 
@@ -15,7 +17,10 @@ export class HostComponent implements OnInit {
   messages = [];
   isUserConnected = false;
 
-  codeFormControl: FormControl = new FormControl('');
+  codeFormControl: FormControl = new FormControl({
+    code: '',
+    timeStamp: Date.now(),
+  });
 
   constructor() {
     this.peer = new Peer();
@@ -36,17 +41,34 @@ export class HostComponent implements OnInit {
       this.connection = _connection;
       console.log('Connected to ' + _connection.peer);
       this.isUserConnected = true;
-      // this.connection.on('data', (data) => {
-      //   this.codeFormControl.setValue(data);
-      // });
+      setInterval(() => {
+        this.connection.send(this.codeFormControl.value);
+      }, 100);
+      this.connection.on('data', (value) => {
+        // console.log('Value Received', value, this.codeFormControl.value);
+        if (this.shouldUpdate(value, this.codeFormControl.value)) {
+          // console.log('Updating');
+          this.codeFormControl.setValue(value);
+        }
+      });
     });
   }
 
   ngOnInit(): void {}
 
   ngAfterViewInit() {
-    this.codeFormControl.valueChanges.subscribe((code) => {
-      this.connection.send(code);
-    });
+    // this.codeFormControl.valueChanges
+    //   .pipe(debounce(() => interval(100)))
+    //   .subscribe((value) => {
+    //     this.connection.send(value);
+    //   });
+  }
+
+  shouldUpdate(newVal, currVal) {
+    if (newVal.code !== currVal.code && newVal.timeStamp > currVal.timeStamp) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

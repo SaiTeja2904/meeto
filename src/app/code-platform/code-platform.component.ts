@@ -24,9 +24,7 @@ export class CodePlatformComponent implements OnInit, ControlValueAccessor {
 
   constructor() {}
   writeValue(obj: any): void {
-    if (obj) {
-      this.codeEditor.setValue(obj);
-    }
+    this.codeEditor.setValue(obj);
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;

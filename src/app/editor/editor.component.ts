@@ -24,9 +24,7 @@ import * as ace from 'ace-builds';
 })
 export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   @ViewChild('editor') private editor: ElementRef<HTMLElement>;
-  value = '';
   aceEditor;
-  manualChange = false;
 
   onChange: any = () => {};
   onTouch: any = () => {};
@@ -34,10 +32,9 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   constructor() {}
 
   writeValue(obj: any): void {
-    if (obj) {
-      console.log('Setting', obj);
-      this.manualChange = true;
-      this.aceEditor.session.setValue(obj);
+    // console.log('Setting', obj);
+    if (this.aceEditor) {
+      this.aceEditor.session.setValue(obj.code);
     }
   }
   registerOnChange(fn: any): void {
@@ -62,14 +59,18 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
     this.aceEditor.setTheme('ace/theme/twilight');
     this.aceEditor.session.setMode('ace/mode/javascript');
     // this.aceEditor.session.setValue(this.tempCode);
-    this.aceEditor.on('change', () => {
-      console.log('Emmitting', this.aceEditor.getValue(), this.manualChange);
-      if (!this.manualChange) {
-        if (this.aceEditor.getValue()) {
-          this.onChange(this.aceEditor.getValue());
-        }
-      }
-      this.manualChange = false;
+    this.aceEditor.on('change', (e) => {
+      // const { action } = e;
+      // if (action !== 'remove') {
+      //   this.onChange({
+      //     code: this.aceEditor.getValue(),
+      //     timeStamp: Date.now(),
+      //   });
+      // }
+      this.onChange({
+        code: this.aceEditor.getValue(),
+        timeStamp: Date.now(),
+      });
     });
   }
 }
