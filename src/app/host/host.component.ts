@@ -29,8 +29,8 @@ export class HostComponent implements OnInit {
 
   private receiveMessages() {
     this.connection.on('data', (value) => {
-      console.log('Value Received', value, this.codeFormControl.value);
       if (this.shouldUpdate(value, this.codeFormControl.value)) {
+        console.log('Value Received', value, this.codeFormControl.value);
         console.log('Updating');
         this.codeFormControl.setValue(value);
       }
@@ -77,9 +77,10 @@ export class HostComponent implements OnInit {
 
   private startVideoStream(_connection: any) {
     const x: any = navigator;
-    var getUserMedia = x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+    var getUserMedia =
+      x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
     getUserMedia(
-      { video: true, audio: true },
+      { video: true, audio: false },
       (stream) => {
         var call = this.peer.call(_connection.peer, stream);
         call.on('stream', (remoteStream) => {

@@ -21,6 +21,7 @@ export class CodePlatformComponent implements OnInit, ControlValueAccessor {
   codeEditor: FormControl = new FormControl('');
 
   onChange: any = () => {};
+  onTouch: any = () => {};
 
   constructor() {}
   writeValue(obj: any): void {
@@ -30,7 +31,7 @@ export class CodePlatformComponent implements OnInit, ControlValueAccessor {
     this.onChange = fn;
   }
   registerOnTouched(fn: any): void {
-    throw new Error('Method not implemented.');
+    this.onTouch = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
     throw new Error('Method not implemented.');

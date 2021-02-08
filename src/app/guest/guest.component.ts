@@ -62,10 +62,11 @@ export class GuestComponent implements OnInit {
 
   private streamAudioVideo() {
     const x: any = window.navigator;
-    var getUserMedia = navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+    var getUserMedia =
+      navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
     this.peer.on('call', (call) => {
       getUserMedia(
-        { video: true, audio: true },
+        { video: true, audio: false },
         (stream) => {
           call.answer(stream); // Answer the call with an A/V stream.
           call.on('stream', (remoteStream) => {
@@ -91,8 +92,8 @@ export class GuestComponent implements OnInit {
 
   private receiveMessages() {
     this.connection.on('data', (value) => {
-      console.log('Value Received', value, this.codeFormControl.value);
       if (this.shouldUpdate(value, this.codeFormControl.value)) {
+        console.log('Value Received', value, this.codeFormControl.value);
         console.log('Updating');
         this.codeFormControl.setValue(value);
       }

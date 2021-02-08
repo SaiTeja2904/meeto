@@ -32,7 +32,7 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   constructor() {}
 
   writeValue(obj: any): void {
-    // console.log('Setting', obj);
+    console.log('Setting', obj);
     if (this.aceEditor) {
       this.aceEditor.session.setValue(obj.code);
     }
@@ -70,6 +70,7 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
       this.onChange({
         code: this.aceEditor.getValue(),
         timeStamp: Date.now(),
+        change: e,
       });
     });
   }
