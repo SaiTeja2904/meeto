@@ -38,14 +38,18 @@ export class HostComponent implements OnInit {
   }
 
   private sendMessages() {
-    setInterval(() => {
-      // this.connection.send({ ...this.codeFormControl.value, code: 'Host' });
-      // this.codeFormControl.setValue({
-      //   ...this.codeFormControl.value,
-      //   code: 'Host',
-      // });
-      this.connection.send(this.codeFormControl.value);
-    }, 100);
+    // setInterval(() => {
+    //   // this.connection.send({ ...this.codeFormControl.value, code: 'Host' });
+    //   // this.codeFormControl.setValue({
+    //   //   ...this.codeFormControl.value,
+    //   //   code: 'Host',
+    //   // });
+    //   this.connection.send(this.codeFormControl.value);
+    // }, 100);
+
+    this.codeFormControl.valueChanges.subscribe((data) => {
+      this.connection.send(data);
+    });
   }
 
   ngOnInit(): void {}

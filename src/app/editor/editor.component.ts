@@ -25,6 +25,8 @@ import * as ace from 'ace-builds';
 export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   @ViewChild('editor') private editor: ElementRef<HTMLElement>;
   aceEditor;
+  isChangeFromPeer = false;
+  counter = 0;
 
   onChange: any = () => {};
   onTouch: any = () => {};
@@ -32,8 +34,10 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
   constructor() {}
 
   writeValue(obj: any): void {
-    console.log('Setting', obj);
     if (this.aceEditor) {
+      console.log('Setting', obj);
+      this.isChangeFromPeer = true;
+      this.counter = 0;
       this.aceEditor.session.setValue(obj.code);
     }
   }
@@ -60,18 +64,26 @@ export class EditorComponent implements AfterViewInit, ControlValueAccessor {
     this.aceEditor.session.setMode('ace/mode/javascript');
     // this.aceEditor.session.setValue(this.tempCode);
     this.aceEditor.on('change', (e) => {
-      // const { action } = e;
+      const { action } = e;
       // if (action !== 'remove') {
       //   this.onChange({
       //     code: this.aceEditor.getValue(),
       //     timeStamp: Date.now(),
       //   });
       // }
-      this.onChange({
-        code: this.aceEditor.getValue(),
-        timeStamp: Date.now(),
-        change: e,
-      });
+      this.counter += 1;
+      if (this.isChangeFromPeer && this.counter <= 2) {
+        return;
+      }
+      if (!this.isChangeFromPeer) {
+        this.onChange({
+          code: this.aceEditor.getValue(),
+          timeStamp: Date.now(),
+          change: e,
+        });
+      }
+      this.isChangeFromPeer = false;
+      this.counter = 0;
     });
   }
 }

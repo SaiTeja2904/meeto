@@ -101,15 +101,18 @@ export class GuestComponent implements OnInit {
   }
 
   private sendMessages() {
-    console.log('Connected to ', this.connection.peer);
-    setInterval(() => {
-      // this.connection.send({ ...this.codeFormControl.value, code: 'Guest' });
-      // this.codeFormControl.setValue({
-      //   ...this.codeFormControl.value,
-      //   code: 'Guest',
-      // });
-      this.connection.send(this.codeFormControl.value);
-    }, 100);
+    // console.log('Connected to ', this.connection.peer);
+    // setInterval(() => {
+    //   // this.connection.send({ ...this.codeFormControl.value, code: 'Guest' });
+    //   // this.codeFormControl.setValue({
+    //   //   ...this.codeFormControl.value,
+    //   //   code: 'Guest',
+    //   // });
+    //   this.connection.send(this.codeFormControl.value);
+    // }, 100);
+    this.codeFormControl.valueChanges.subscribe((data) => {
+      this.connection.send(data);
+    });
   }
 
   shouldUpdate(newVal, currVal) {
