@@ -52,13 +52,18 @@ export class GuestComponent implements OnInit {
     this.connection.on('open', () => {
       console.log('Connected to ', this.connection.peer);
       setInterval(() => {
+        // this.connection.send({ ...this.codeFormControl.value, code: 'Guest' });
+        // this.codeFormControl.setValue({
+        //   ...this.codeFormControl.value,
+        //   code: 'Guest',
+        // });
         this.connection.send(this.codeFormControl.value);
-      }, 100);
+      }, 200);
       this.isUserConnected = true;
       this.connection.on('data', (value) => {
-        // console.log('Value Received', value, this.codeFormControl.value);
+        console.log('Value Received', value, this.codeFormControl.value);
         if (this.shouldUpdate(value, this.codeFormControl.value)) {
-          // console.log('Updating');
+          console.log('Updating');
           this.codeFormControl.setValue(value);
         }
       });

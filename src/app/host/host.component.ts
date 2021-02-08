@@ -42,12 +42,17 @@ export class HostComponent implements OnInit {
       console.log('Connected to ' + _connection.peer);
       this.isUserConnected = true;
       setInterval(() => {
+        // this.connection.send({ ...this.codeFormControl.value, code: 'Host' });
+        // this.codeFormControl.setValue({
+        //   ...this.codeFormControl.value,
+        //   code: 'Host',
+        // });
         this.connection.send(this.codeFormControl.value);
       }, 100);
       this.connection.on('data', (value) => {
-        // console.log('Value Received', value, this.codeFormControl.value);
+        console.log('Value Received', value, this.codeFormControl.value);
         if (this.shouldUpdate(value, this.codeFormControl.value)) {
-          // console.log('Updating');
+          console.log('Updating');
           this.codeFormControl.setValue(value);
         }
       });
