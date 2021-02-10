@@ -2,5 +2,5 @@ Connected : {{ isUserConnected ? "Yes" : "No" }}
 
 <app-code-platform [formControl]="codeFormControl"></app-code-platform>
 
-<video #hostVideo autoplay></video>
-<video #guestVideo autoplay></video>
+<app-live-video [showControls]="true" [stream]="myStream"></app-live-video>
+<app-live-video [showControls]="false" [stream]="guestStream"></app-live-video>

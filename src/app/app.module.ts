@@ -12,6 +12,7 @@ import { CodePlatformComponent } from './code-platform/code-platform.component';
 import { HostComponent } from './host/host.component';
 import { GuestComponent } from './guest/guest.component';
 import { HttpClientModule } from '@angular/common/http';
+import { LiveVideoComponent } from './live-video/live-video.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
     CodePlatformComponent,
     HostComponent,
     GuestComponent,
+    LiveVideoComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,14 +16,13 @@ export class HostComponent implements OnInit {
   connection;
   messages = [];
   isUserConnected = false;
+  myStream: MediaStream;
+  guestStream: MediaStream;
 
   codeFormControl: FormControl = new FormControl({
     code: '',
     timeStamp: Date.now(),
   });
-
-  @ViewChild('hostVideo') hostVideo: ElementRef;
-  @ViewChild('guestVideo') guestVideo: ElementRef;
 
   constructor() {}
 
@@ -84,21 +83,12 @@ export class HostComponent implements OnInit {
     var getUserMedia =
       x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
     getUserMedia(
-      { video: true, audio: false },
+      { video: true, audio: true },
       (stream) => {
         var call = this.peer.call(_connection.peer, stream);
         call.on('stream', (remoteStream) => {
-          const hostVideoElement = this.hostVideo.nativeElement;
-          hostVideoElement.srcObject = stream;
-          hostVideoElement.onloadedmetadata = (e: any) => {
-            hostVideoElement.play();
-          };
-
-          const guestVideoElement = this.guestVideo.nativeElement;
-          guestVideoElement.srcObject = remoteStream;
-          guestVideoElement.onloadedmetadata = (e: any) => {
-            guestVideoElement.play();
-          };
+          this.myStream = stream;
+          this.guestStream = remoteStream;
         });
       },
       (err) => {

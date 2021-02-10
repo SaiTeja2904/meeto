@@ -1,0 +1,10 @@
+<video #liveVideo autoplay></video>
+
+<ng-container *ngIf="showControls && videoLoaded">
+  <button (click)="onOffCamera()">
+    {{ camera ? "Stop" : "Play" }} Video
+  </button>
+  <button (click)="muteUnmuteAudio()">
+    {{ voice ? "Mute" : "Unmute" }}
+  </button>
+</ng-container>
