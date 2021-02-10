@@ -63,7 +63,7 @@ export class GuestComponent implements OnInit {
   private streamAudioVideo() {
     const x: any = window.navigator;
     var getUserMedia =
-      navigator.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
+      x.getUserMedia || x.webkitGetUserMedia || x.mozGetUserMedia;
     this.peer.on('call', (call) => {
       getUserMedia(
         { video: true, audio: false },
