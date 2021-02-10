@@ -4,6 +4,7 @@ import {
   FormControl,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { CodePlatformService } from './code-platform.service';
 
 @Component({
   selector: 'app-code-platform',
@@ -19,10 +20,13 @@ import {
 })
 export class CodePlatformComponent implements OnInit, ControlValueAccessor {
   codeEditor: FormControl = new FormControl('');
+  output;
 
   onChange: any = () => {};
+  onTouch: any = () => {};
 
-  constructor() {}
+  constructor(private codePlatformService: CodePlatformService) {}
+
   writeValue(obj: any): void {
     this.codeEditor.setValue(obj);
   }
@@ -30,7 +34,7 @@ export class CodePlatformComponent implements OnInit, ControlValueAccessor {
     this.onChange = fn;
   }
   registerOnTouched(fn: any): void {
-    throw new Error('Method not implemented.');
+    this.onTouch = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
     throw new Error('Method not implemented.');
@@ -42,5 +46,13 @@ export class CodePlatformComponent implements OnInit, ControlValueAccessor {
     this.codeEditor.valueChanges.subscribe((val) => {
       this.onChange(val);
     });
+  }
+
+  execute() {
+    this.codePlatformService
+      .execute(this.codeEditor.value.code)
+      .subscribe((out) => {
+        this.output = out.response;
+      });
   }
 }

@@ -11,9 +11,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CodePlatformComponent } from './code-platform/code-platform.component';
 import { HostComponent } from './host/host.component';
 import { GuestComponent } from './guest/guest.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [AppComponent, ConnectionComponent, EditorComponent, CodePlatformComponent, HostComponent, GuestComponent],
+  declarations: [
+    AppComponent,
+    ConnectionComponent,
+    EditorComponent,
+    CodePlatformComponent,
+    HostComponent,
+    GuestComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -21,6 +29,7 @@ import { GuestComponent } from './guest/guest.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
