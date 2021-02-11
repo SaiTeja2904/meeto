@@ -69,6 +69,7 @@ export class GuestComponent implements OnInit {
         (stream) => {
           call.answer(stream); // Answer the call with an A/V stream.
           call.on('stream', (remoteStream) => {
+            console.log('Received Stream', remoteStream);
             this.myStream = stream;
             this.guestStream = remoteStream;
           });
@@ -77,6 +78,10 @@ export class GuestComponent implements OnInit {
           console.log('Failed to get local stream', err);
         }
       );
+    });
+
+    this.peer.on('error', (error) => {
+      console.log('Error', error);
     });
   }
 
